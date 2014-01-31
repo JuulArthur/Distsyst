@@ -9,5 +9,6 @@ public interface TTTRemoteInterface extends Remote {
 
     public String connect(String playerName, char piece, TicTacToeServer opponent) throws RemoteException;
     public void disconnect() throws RemoteException;
+    public void doMove(int x, int y);
 
 }

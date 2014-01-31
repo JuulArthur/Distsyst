@@ -1,4 +1,4 @@
-Distsyst
-========
+distsys-oving1
+==============
 
-Ya bich!
+Distribuerte Systemer øving 1

@@ -1,6 +1,7 @@
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 
 /**
@@ -8,8 +9,9 @@ import java.rmi.RemoteException;
  */
 public class TicTacToeServer implements TTTRemoteInterface {
     String url;
-    TicTacToe game;
+    BoardModel boardModel;
     String playerName;
+    char opponentMark;
 
     @Override
     public String connect(String playerName, char mark, TicTacToeServer opponent) throws RemoteException {
@@ -23,14 +25,24 @@ public class TicTacToeServer implements TTTRemoteInterface {
         return playerName;
     }
 
-    TicTacToeServer(String playerName, String url) {
+    TicTacToeServer(String playerName, String url, BoardModel boardModel) {
+        System.setSecurityManager(new RMISecurityManager());
         this.url = url;
         this.playerName = playerName;
+        this.boardModel = boardModel;
     }
 
     public void setUrl(String url){
         this.url = url;
 
+    }
+
+    public void setOpponentMark(char mark) throws RemoteException{
+        this.opponentMark = mark;
+    }
+
+    public void doMove(int x, int y) throws RemoteException {
+        boardModel.setCell(x, y, this.opponentMark);
     }
 
     @Override
