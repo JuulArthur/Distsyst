@@ -32,10 +32,15 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     public static void main(String args[])
     {
+<<<<<<< HEAD
+=======
+        boolean connected = false;
+>>>>>>> leik dis?
         System.out.println("Enter playername:");
         Scanner sc = new Scanner(System.in);
         String playername = sc.nextLine();
         System.out.println("Enter playername:");
+<<<<<<< HEAD
         String adress = sc.nextLine();
         new TicTacToe(playername,adress);
 
@@ -43,6 +48,14 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     private void setupConnection(String playerName,String adress){
         String url = "rmi://"+ adress + "/TicTacToeServer";
+=======
+        String url = sc.nextLine();
+        new TicTacToe(url,playername);
+
+    }
+
+    private void setupConnect(String playerName,String url){
+>>>>>>> leik dis?
         this.thisPlayer = new TicTacToeServer(playerName,url);
         try {
             this.otherPlayer = (TTTRemoteInterface) Naming.lookup(url);
@@ -59,7 +72,11 @@ public class TicTacToe extends JFrame implements ListSelectionListener
     public TicTacToe(String name, String url)
     {
         super("TDT4190: Tic Tac Toe");
+<<<<<<< HEAD
         setupConnection(name, url);
+=======
+        setupConnect(name, url);
+>>>>>>> leik dis?
 
 
         boardModel = new BoardModel(BOARD_SIZE);
