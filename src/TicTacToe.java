@@ -9,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.Scanner;
 
 /**
  * A Tic Tac Toe application.
@@ -61,7 +62,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
             e.printStackTrace();
         }
 
-        //Remote player not yet found
+        //Remote player not yet found, I am server
         if(remotePlayer == null){
             try {
                 LocateRegistry.createRegistry(PORT);
@@ -76,7 +77,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         }
         //Remote player found
         else{
-            remotePlayer.connect("Geir",'X',localPlayer);
+            remotePlayer.connect(address,'X',localPlayer);
 
         }
 
@@ -118,7 +119,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         setLocation(centerX, centerY);
         setVisible(true);
 
-        initRMI();
+        initRMI("127.0.0.1" + PORT);
     }
 
     void setStatusMessage(String status)

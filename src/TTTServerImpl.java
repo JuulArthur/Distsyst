@@ -1,4 +1,7 @@
 import javax.swing.event.ListSelectionEvent;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -15,8 +18,16 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     }
 
     @Override
-    public void connect(String name, char mark, TTTServerImpl opponent){
-
+    public void connect(String address, char mark, TTTServerImpl opponent) {
+        try {
+            Naming.unbind(address);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void valueChanged(ListSelectionEvent e){
