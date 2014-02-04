@@ -77,7 +77,11 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         }
         //Remote player found
         else{
-            remotePlayer.connect(address,'X',localPlayer);
+            try {
+                remotePlayer.connect(address,'X',localPlayer);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
         }
 
