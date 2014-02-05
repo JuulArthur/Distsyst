@@ -144,14 +144,12 @@ public class TicTacToe extends JFrame implements ListSelectionListener
             return;
         int x = board.getSelectedColumn();
         int y = board.getSelectedRow();
-        if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
+        if (x == -1 || y == -1 || !boardModel.isEmpty(x, y) || !myTurn){
             return;
-
-        if(myTurn){
-            myTurn = false;
         }
-        else{
-            return;
+        else {
+            myTurn = false;
+            this.setStatusMessage("Opponent's turn");
         }
 
         if (boardModel.setCell(x, y, playerMarks[currentPlayer]))
@@ -170,6 +168,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
     public void LocalValueChanged(int x, int y)
     {
         myTurn = true;
+        this.setStatusMessage("My turn");
         if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
             return;
         if (boardModel.setCell(x, y, playerMarks[currentPlayer])){
