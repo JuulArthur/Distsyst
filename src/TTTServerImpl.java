@@ -1,4 +1,3 @@
-import javax.swing.event.ListSelectionEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -17,6 +16,7 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     @Override
     public void connect(String address, char mark, TTTServer opponent) throws RemoteException{
         tttgame.setOpponent(opponent);
+        //lel
         System.out.println("Connected");
     }
 
