@@ -65,7 +65,6 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         //Remote player not yet found, I am server
         if(remotePlayer == null){
             try {
-                LocateRegistry.createRegistry(PORT);
                 Naming.rebind(url, localPlayer);
                 System.out.println("Waiting for opponent...");
 
