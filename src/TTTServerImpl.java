@@ -20,9 +20,7 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     @Override
     public void connect(String address, char mark, TTTServerImpl opponent) throws RemoteException{
         try {
-            Naming.unbind(address);
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+            Naming.rebind(address, opponent);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
