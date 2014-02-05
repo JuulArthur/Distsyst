@@ -13,7 +13,7 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     private TicTacToe tttgame;
 
 
-    public TTTServerImpl(TicTacToe tttgame) throws RemoteException{
+    public TTTServerImpl() throws RemoteException{
         this.tttgame = tttgame;
     }
 

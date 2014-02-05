@@ -26,7 +26,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
     private final JLabel statusLabel = new JLabel();
     private final char playerMarks[] = {'X', 'O'};
     private int currentPlayer = 0; // Player to set the next mark.
-    private final static int PORT = 3100;
+    private final static int PORT = 3101;
 
 
 
@@ -41,11 +41,11 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     public void initRMI(String address){
         // Set sercurity manager
-        System.setSecurityManager(new RMISecurityManager());
+        System.setSecurityManager(new InsecureSecurityManager());
 
         //Set local server
         try {
-            this.localPlayer = new TTTServerImpl(this);
+            this.localPlayer = new TTTServerImpl();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -123,7 +123,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         setLocation(centerX, centerY);
         setVisible(true);
 
-        initRMI("127.0.0.1" + PORT);
+        initRMI("127.0.0.1:" + PORT);
     }
 
     void setStatusMessage(String status)
