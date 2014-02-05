@@ -6,10 +6,7 @@ import java.awt.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.util.Scanner;
 
 /**
  * A Tic Tac Toe application.
@@ -45,7 +42,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
         //Set local server
         try {
-            this.localPlayer = new TTTServerImpl();
+            this.localPlayer = new TTTServerImpl(this);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -77,7 +74,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         //Remote player found
         else{
             try {
-                remotePlayer.connect(address,'X',localPlayer);
+                remotePlayer.connect(url,'X',localPlayer);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -86,7 +83,9 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     }
 
-
+    public void setOpponent(TTTServer opponent){
+        this.remotePlayer = opponent;
+    }
     public TicTacToe()
     {
         super("TDT4190: Tic Tac Toe");
@@ -140,10 +139,32 @@ public class TicTacToe extends JFrame implements ListSelectionListener
      */
     public void valueChanged(ListSelectionEvent e)
     {
+        System.out.println("Changing my value");
+        System.out.println(e.toString());
         if (e.getValueIsAdjusting())
             return;
         int x = board.getSelectedColumn();
         int y = board.getSelectedRow();
+        System.out.println(x);
+        System.out.println(y);
+        if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
+            return;
+        if (boardModel.setCell(x, y, playerMarks[currentPlayer]))
+            setStatusMessage("Player " + playerMarks[currentPlayer] + " won!");
+        currentPlayer = 1 - currentPlayer; // The next turn is by the other player.
+
+        try {
+            remotePlayer.valueChanged(x,y);
+            System.out.println("Changing the other value");
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
+        }
+
+
+    }
+
+    public void LocalValueChanged(int x, int y)
+    {
         if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
             return;
         if (boardModel.setCell(x, y, playerMarks[currentPlayer]))

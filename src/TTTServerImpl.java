@@ -1,7 +1,4 @@
 import javax.swing.event.ListSelectionEvent;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -13,22 +10,18 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     private TicTacToe tttgame;
 
 
-    public TTTServerImpl() throws RemoteException{
+    public TTTServerImpl(TicTacToe tttgame) throws RemoteException{
         this.tttgame = tttgame;
     }
 
     @Override
-    public void connect(String address, char mark, TTTServerImpl opponent) throws RemoteException{
-        try {
-            Naming.rebind(address, opponent);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+    public void connect(String address, char mark, TTTServer opponent) throws RemoteException{
+        tttgame.setOpponent(opponent);
+        System.out.println("Connected");
     }
 
-    public void valueChanged(ListSelectionEvent e){
-        tttgame.valueChanged(e);
-
+    public void valueChanged(int x, int y){
+        tttgame.LocalValueChanged(x,y);
     }
 
 

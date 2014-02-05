@@ -1,14 +1,14 @@
-import javax.swing.event.ListSelectionEvent;
-import java.rmi.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * Created by tib on 2/3/14.
  */
 public interface TTTServer extends Remote{
 
-    public void connect(String name, char mark ,TTTServerImpl opponent) throws RemoteException;
+    public void connect(String name, char mark ,TTTServer opponent) throws RemoteException;
 
-    public void valueChanged(ListSelectionEvent e) throws RemoteException;
+    public void valueChanged(int x, int y) throws RemoteException;
 
 
 }
