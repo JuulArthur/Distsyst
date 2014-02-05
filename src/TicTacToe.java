@@ -25,10 +25,9 @@ public class TicTacToe extends JFrame implements ListSelectionListener
     private int currentPlayer = 0; // Player to set the next mark.
     private final static int PORT = 3101;
 
-
-
     private TTTServerImpl localPlayer;
     private TTTServer remotePlayer;
+    private boolean myTurn;
 
 
     public static void main(String args[])
@@ -61,9 +60,9 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
         //Remote player not yet found, I am server
         if(remotePlayer == null){
+            myTurn = true;
             try {
                 Naming.rebind(url, localPlayer);
-                System.out.println("Waiting for opponent...");
 
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -73,6 +72,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         }
         //Remote player found
         else{
+            myTurn = false;
             try {
                 remotePlayer.connect(url,'X',localPlayer);
             } catch (RemoteException e) {
@@ -139,23 +139,26 @@ public class TicTacToe extends JFrame implements ListSelectionListener
      */
     public void valueChanged(ListSelectionEvent e)
     {
-        System.out.println("Changing my value");
-        System.out.println(e.toString());
         if (e.getValueIsAdjusting())
             return;
         int x = board.getSelectedColumn();
         int y = board.getSelectedRow();
-        System.out.println(x);
-        System.out.println(y);
         if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
             return;
+
+        if(myTurn){
+            myTurn = false;
+        }
+        else{
+            return;
+        }
+
         if (boardModel.setCell(x, y, playerMarks[currentPlayer]))
             setStatusMessage("Player " + playerMarks[currentPlayer] + " won!");
         currentPlayer = 1 - currentPlayer; // The next turn is by the other player.
 
         try {
             remotePlayer.valueChanged(x,y);
-            System.out.println("Changing the other value");
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
@@ -165,10 +168,14 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     public void LocalValueChanged(int x, int y)
     {
+        myTurn = true;
         if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
             return;
-        if (boardModel.setCell(x, y, playerMarks[currentPlayer]))
+        if (boardModel.setCell(x, y, playerMarks[currentPlayer])){
             setStatusMessage("Player " + playerMarks[currentPlayer] + " won!");
+            myTurn=false;
+        }
+
         currentPlayer = 1 - currentPlayer; // The next turn is by the other player.
     }
 }
