@@ -39,14 +39,14 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         // Set sercurity manager
         System.setSecurityManager(new InsecureSecurityManager());
 
-        //Set local server
+        //Set my server
         try {
             this.localPlayer = new TTTServerImpl(this);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        //Set remote server
+        //Set remote player's server
         String url = "rmi://"+ address + "/TTTServer";
         try {
             this.remotePlayer = (TTTServer) Naming.lookup(url);
@@ -58,12 +58,12 @@ public class TicTacToe extends JFrame implements ListSelectionListener
             e.printStackTrace();
         }
 
-        //Remote player not yet found, I am server
+        //Remote player not found, I am server
         if(remotePlayer == null){
             myTurn = true;
             try {
+                //Let players wih my url find me.
                 Naming.rebind(url, localPlayer);
-
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (MalformedURLException e) {
@@ -73,9 +73,10 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         //Remote player found
         else{
             try {
+                //Make remote player connect to me.
                 remotePlayer.connect(url,'X',localPlayer);
-                myTurn = false;
-                this.setStatusMessage("Opponent connected");
+                myTurn = false; //He starts.
+                this.setStatusMessage("Opponent connected. His turn");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -84,9 +85,11 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     }
 
+    //Set this players opponent.
     public void setOpponent(TTTServer opponent){
         this.remotePlayer = opponent;
     }
+
     public TicTacToe()
     {
         super("TDT4190: Tic Tac Toe");
@@ -122,6 +125,7 @@ public class TicTacToe extends JFrame implements ListSelectionListener
         setLocation(centerX, centerY);
         setVisible(true);
 
+
         initRMI("127.0.0.1:" + PORT);
     }
 
@@ -140,22 +144,28 @@ public class TicTacToe extends JFrame implements ListSelectionListener
      */
     public void valueChanged(ListSelectionEvent e)
     {
-        if (e.getValueIsAdjusting())
-            return;
-        int x = board.getSelectedColumn();
-        int y = board.getSelectedRow();
-        if (x == -1 || y == -1 || !boardModel.isEmpty(x, y) || !myTurn){
-            return;
-        }
-        else {
+
+        //Check if somthing has changed
+        if (e.getValueIsAdjusting()) return;
+
+        //Check if its my turn
+        if (myTurn) {
             myTurn = false;
             this.setStatusMessage("Opponent's turn");
-        }
+        } else return; //Else do nothing
 
+        //Get x and y coordinates of changed cell.
+        int x = board.getSelectedColumn();
+        int y = board.getSelectedRow();
+        if (x == -1 || y == -1 || !boardModel.isEmpty(x, y)){
+            return;
+        }
+        //Do move on local model. Check if I won.
         if (boardModel.setCell(x, y, playerMarks[currentPlayer]))
             setStatusMessage("Player " + playerMarks[currentPlayer] + " won!");
         currentPlayer = 1 - currentPlayer; // The next turn is by the other player.
 
+        //Do move on remote opponents model.
         try {
             remotePlayer.valueChanged(x,y);
         } catch (RemoteException e1) {
@@ -165,17 +175,19 @@ public class TicTacToe extends JFrame implements ListSelectionListener
 
     }
 
-    public void LocalValueChanged(int x, int y)
+    public void localValueChanged(int x, int y)
     {
+        //The opponent has done a move, its my turn
         myTurn = true;
         this.setStatusMessage("My turn");
+
+        //Update my model with opponents move. Check if he won.
         if (x == -1 || y == -1 || !boardModel.isEmpty(x, y))
             return;
         if (boardModel.setCell(x, y, playerMarks[currentPlayer])){
             setStatusMessage("Player " + playerMarks[currentPlayer] + " won!");
             myTurn=false;
         }
-
         currentPlayer = 1 - currentPlayer; // The next turn is by the other player.
     }
 }

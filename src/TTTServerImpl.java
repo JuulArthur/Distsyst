@@ -16,11 +16,11 @@ public class TTTServerImpl extends UnicastRemoteObject implements TTTServer {
     @Override
     public void connect(String address, char mark, TTTServer opponent) throws RemoteException{
         tttgame.setOpponent(opponent);
-        tttgame.setStatusMessage("Opponent connected");
+        tttgame.setStatusMessage("Opponent connected. My turn");
     }
 
     public void valueChanged(int x, int y){
-        tttgame.LocalValueChanged(x,y);
+        tttgame.localValueChanged(x,y);
     }
 
 
