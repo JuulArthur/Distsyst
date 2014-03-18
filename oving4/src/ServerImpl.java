@@ -374,7 +374,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server
    * Gives the lock of the specified local resource to the specified transaction.
    * This method blocks until the lock has been acquired.
    *
-   * @param lockerId   The ID of the transaction that wants the lock.
+   * @param transactionId   The ID of the transaction that wants the lock.
    * @param resourceId The ID of the resource whose lock the transaction wants.
    * @return Whether or not the lock was acquired.
    */
@@ -390,8 +390,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server
   /**
    * Release the lock of the specified local resource, which is currently locked by the specified transaction.
    *
-   * @param lockerId   The ID of the transaction that owns the lock and wants to release it.
-   * @param resourceID The ID of the resource whose lock the transaction wants to release.
+   * @param transactionId   The ID of the transaction that owns the lock and wants to release it.
+   * @param resourceId The ID of the resource whose lock the transaction wants to release.
    * @return Whether or not the lock could be released.
    */
   public boolean releaseLock(int transactionId, int resourceId) throws RemoteException

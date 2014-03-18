@@ -17,3 +17,5 @@
 
 # Mac
 .DS_Store
+
+output_server*.txt
