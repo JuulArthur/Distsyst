@@ -1,0 +1,12 @@
+==================================================================
+253: Server 2 started.
+4216: Server 2 started its transactions.
+4270: Transaction 2000 arrived.
+4272: TRANS 2000: Starting transaction 2000.
+4273: TRANS 2000: Trying to claim lock of resource 0 at server 1
+4276: TRANS 2000: Lock claimed. Processing...
+4370: TRANS 2000: Trying to claim lock of resource 6 at server 2
+4371: TRANS 2000: Lock claimed. Processing...
+4411: TRANS 2000: Trying to claim lock of resource 8 at server 2
+4412: TRANS 2000: Lock claimed. Processing...
+4456: TRANS 2000: Trying to claim lock of resource 1 at server 2
