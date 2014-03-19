@@ -177,6 +177,10 @@ class Transaction
     return false;
   }
 
+  public synchronized void force_abort(){
+      abort();
+  }
+
   /**
    * Aborts this transaction, releasing all the locks held by it.
    */
@@ -250,4 +254,17 @@ class Transaction
       owner.println("Failed to unlock resource " + resource.resourceId + " at server " + resource.serverId + " due to communication failure.", transactionId);
     }
   }
+
+  public ResourceAccess getWaitingForResource(){
+    return this.waitingForResource;
+   }
+
+  public int getTransactionId(){
+      return this.transactionId;
+  }
+
+    public ServerImpl getOwner(){
+        return this.owner;
+    }
+
 }

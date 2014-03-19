@@ -1,4 +1,3 @@
-
 /**
  * A resource with an associated lock that can be held by only one transaction at a time.
  */
@@ -26,17 +25,19 @@ class Resource
    * @param transactionId The ID of the transaction that wants the lock.
    * @return Whether or not the lock could be acquired.
    */
-  synchronized boolean lock(int transactionId)
+  synchronized Integer lock(int transactionId)
   {
+      System.out.println(transactionId);
+      System.out.println(lockOwner);
     if (lockOwner == transactionId) {
       System.err.println("Error: Transaction " + transactionId + " tried to lock a resource it already has locked!");
-      return false;
+      return -1;
     }
     if(!Globals.PROBING_ENABLED){
         boolean haveWaited = false;
         while (lockOwner != NOT_LOCKED) {
             if (haveWaited){
-                return false;
+                return -1;
             }
             try {
                 wait(3000);
@@ -47,16 +48,16 @@ class Resource
         }
     }
     else {
-        while (lockOwner != NOT_LOCKED) {
-            try {
-                wait();
-            } catch (InterruptedException ie) {
-            }
+        if (lockOwner != NOT_LOCKED) {
+            System.out.println("lock owner");
+            System.out.println(lockOwner);
+            System.out.println(NOT_LOCKED);
+            return 0;
         }
     }
 
     lockOwner = transactionId;
-    return true;
+    return 1;
   }
 
   /**
@@ -76,6 +77,7 @@ class Resource
 
     lockOwner = NOT_LOCKED;
     // Notify a waiting thread that it can acquire the lock
+      System.out.println("Im notifying my ass off!");
     notifyAll();
     return true;
   }
@@ -111,4 +113,12 @@ class Resource
   {
     return lockOwner != NOT_LOCKED && ServerImpl.getTransactionOwner(lockOwner) == serverId;
   }
+
+    public synchronized void doWait() {
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

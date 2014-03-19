@@ -78,6 +78,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server
    */
   private long startupTime;
 
+
   /**
    * Creates a new server.
    *
@@ -381,10 +382,42 @@ public class ServerImpl extends UnicastRemoteObject implements Server
   public boolean lockResource(int transactionId, int resourceId) throws RemoteException
   {
     Resource r = resources.get(resourceId);
-    boolean result = r.lock(transactionId);
+    int result = r.lock(transactionId);
+      System.out.println("Result");
+      System.out.println(result);
+      final Server transactionOwner = servers.get(r.getLockOwner()/1000);
+      if (transactionOwner.getServerId() == this.serverId && result == 0){
+          return false;
+      }
+      // We will wait
+    while(result==0){
+        System.out.println(r.getLockOwner()/1000);
+        final List<Integer> serverIds= new ArrayList<Integer>();
+        serverIds.add(transactionOwner.getServerId());
+        System.out.println("Im probing my lord");
+        Thread t = new Thread(new Runnable() {
+            public void run()
+            {
+                try {
+                    transactionOwner.probe(serverIds);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+        //transactionOwner.probe(serverIds);
+        System.out.println("Waiting for the other server");
+        r.doWait();
+        System.out.println("Im done waiting");
+        //Check wait and notify time
+        result = r.lock(transactionId);
+    }
     if (gui != null)
       gui.updateResourceTable(resources);
-    return result;
+      System.out.println("I got resource");
+      System.out.println(resourceId);
+    return result==1;
   }
 
   /**
@@ -414,7 +447,26 @@ public class ServerImpl extends UnicastRemoteObject implements Server
     }
   }
 
-  /**
+    @Override
+    public void probe(List<Integer> ids) throws RemoteException {
+        System.out.println("SKJER");
+        System.out.println(ids);
+        if (ids.contains(serverId)){
+            System.out.println("FORCING ABORT, mohahaha");
+            activeTransaction.force_abort();
+            return;
+        }
+        ResourceAccess activeResource = activeTransaction.getWaitingForResource();
+        System.out.println("PLZ BE FALSE");
+        System.out.println(activeResource.serverId != this.serverId);
+        if (activeResource!=null){
+            ids.add(serverId);
+            System.out.println(activeResource.serverId);
+            activeResource.server.probe(ids);
+        }
+    }
+
+    /**
    * Called whenever this server loses contact with another server.
    * Notifies all servers that the given server is down.
    *
@@ -586,7 +638,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server
    */
   public static void main(String[] args)
   {
-    String registryAddress = "localhost:3010";
+    String registryAddress = "localhost:3011";
     String inputfile = null;
     if (args.length > 0)
       registryAddress = args[0];
