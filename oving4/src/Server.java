@@ -1,4 +1,6 @@
-import java.rmi.*;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Remote interface specifying the functionality
@@ -51,4 +53,6 @@ public interface Server extends Remote
    * Called by another server to ask this server to start its transactions.
    */
   void startTransactions() throws RemoteException;
+
+  void probe(List<Integer> ids) throws RemoteException;
 }

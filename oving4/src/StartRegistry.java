@@ -22,9 +22,9 @@ public class StartRegistry
     }
     else {
 		try {
-			Registry r = LocateRegistry.createRegistry(3010);
+			Registry r = LocateRegistry.createRegistry(3011);
 			r.bind("RegistryProxy", new RegistryProxyImpl());
-			System.out.println("RMI registry is now running on port 3010.");
+			System.out.println("RMI registry is now running on port 3011.");
 		} catch (Exception re) {
 			re.printStackTrace();
 		}
